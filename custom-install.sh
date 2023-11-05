@@ -91,9 +91,6 @@ function setup_kernel() {
 
 function update_grub() {
     msg INFO "Updating GRUB..."
-    # Instalar el nuevo kernel deberia activar la actualizacion
-    #  de configuraciones del GRUB, pero no esta demas asegurarse
-    # Tambien deberian activarse la recompilacion de initrds con dracut
     grub-mkconfig -o /boot/grub/grub.cfg
 }
 
@@ -102,7 +99,9 @@ function main() {
     setup_playmouth
     setup_touchegg
     setup_kernel
-    update-grub
+    # Instalar el nuevo kernel deberia activar la recompilacion de initrds con dracut
+    # Por lo que solo queda actualizar el GRUB
+    update_grub
 
     # Esto es una opcion experimental para comprobar los logs durante un momento
     msg INFO "Finishing up..."

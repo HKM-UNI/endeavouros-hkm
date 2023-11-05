@@ -113,6 +113,7 @@ function main() {
     setup_playmouth
     setup_touchegg
     setup_kernel
+    update-grub
 
     # Esto es una opcion experimental para comprobar los logs durante un momento
     msg INFO "Finishing up..."

@@ -84,6 +84,9 @@ function setup_kernel() {
 
     msg INFO "Installing the custom kernel..."
     pacman -U "${KERNEL_PKGS[@]}" --noconfirm
+
+    msg INFO "Ignoring kernel upgrades..."
+    sed -r -i 's/#?(IgnorePkg\s*=.*)/\1 linux/' /etc/pacman.conf
 }
 
 function update_grub() {

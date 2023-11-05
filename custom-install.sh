@@ -46,48 +46,34 @@ function setup_playmouth() {
     cp -r ./hkm-uni $PLYMOUTH_THEMES_DIR
 }
 
-function get_new_user() {
-    # This function is required when customizing personal settings.
-
-    if [ -r /tmp/new_username.txt ] ; then
-        new_user="$(cat /tmp/new_username.txt)"
-        if [ -n "$new_user" ] ; then
-            home="/home/$new_user"
-        fi
-    fi
-}
-
 function setup_touchegg() {
     command -v touche > /dev/null || {
         msg INFO "Installing touchegg (Service) + touche (GUI)..."
         pacman -U ./touche-2.0.11-1-x86_64.pkg.tar.zst --noconfirm
     }
 
-    local new_user=""
-    local home=""
+    local username="$1"
+    local home="/home/$username"
 
-    get_new_user
-
-    if [ -z "$new_user" ] ; then
-        msg WARNING "the new user was not found, it will not be possible to restore custom touchegg gestures"
-    else
-        # Esto asume que si $new_user existe, entonces el home tambien
-        # Puede no ser siempre asi
-        [[ ! -d "$home/.config/touchegg" ]] && {
-            msg INFO "Creating touchegg's .config dir..."
-            mkdir -p "$home/.config/touchegg"
-        }
-
-        msg INFO "Restoring touchegg gestures..."
-        cp ./touchegg.conf "$home/.config/touchegg/touchegg.conf"
-
-        msg INFO "Fixing config's ownership for '$new_user'..."
-        chown -R $new_user:$new_user "$home/.config/"
+    if [[ -z "$username" || ! -d "$home" ]] ; then
+        msg WARNING "The user is not properly configured. It will not be possible to restore custom touchegg gestures."
+        sleep 2
+        return
     fi
+
+    [[ ! -d "$home/.config/touchegg" ]] && {
+        msg INFO "Creating touchegg's .config dir..."
+        mkdir -p "$home/.config/touchegg"
+    }
+
+    msg INFO "Restoring touchegg gestures..."
+    cp ./touchegg.conf "$home/.config/touchegg/touchegg.conf"
+
+    msg INFO "Fixing config's ownership for '$username'..."
+    chown -R $username:$username "$home/.config/"
 
     msg INFO "Enabling touchegg service..."
     systemctl enable touchegg
-    systemctl start touchegg
 }
 
 function setup_kernel() {

@@ -12,6 +12,9 @@ KERNEL_PKGS=(
     "linux-headers-6.5.5.arch1-1-x86_64.pkg.tar.zst"
 )
 
+username="$1"
+home="/home/$username"
+
 function msg() {
     local severity="$1"
     local msg="$2"
@@ -51,9 +54,6 @@ function setup_touchegg() {
         msg INFO "Installing touchegg (Service) + touche (GUI)..."
         pacman -U ./touche-2.0.11-1-x86_64.pkg.tar.zst --noconfirm
     }
-
-    local username="$1"
-    local home="/home/$username"
 
     if [[ -z "$username" || ! -d "$home" ]] ; then
         msg WARNING "The user is not properly configured. It will not be possible to restore custom touchegg gestures."
